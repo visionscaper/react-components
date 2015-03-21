@@ -2,11 +2,13 @@
 
 /**
  *
- * <ValidatedInputField id={string}
- *                   value={string}
- *                   validity={validity object}
- *               processInput={function(newValue)}
- *                       type={"email" | "password" | etc...} />
+ * <ValidatedInputField
+ *              id={string}
+ *              value={string}
+ *              validity={validity object}
+ *              processInput={function(newValue)}
+ *              type={"email" | "password" | etc...}
+ * />
  *
  *
  * Validity object:
@@ -19,16 +21,27 @@
  */
 var ValidatedInputField = React.createClass({
 
+    processTimer : null,
+
 
     processInput : function(e) {
+        var self = this;
         if (typeof(e)!="object") {
             return;
         }
 
         var newValue = (e.target || {}).value;
-        if (newValue !== this.data.value) {
+        if (newValue !== this.props.value) {
             if (typeof(this.props.processInput) === "function") {
-                this.props.processInput(newValue);
+                if (this.processTimer) {
+                    clearTimeout(this.processTimer);
+                    this.processTimer = null;
+                }
+
+                this.processTimer = setTimeout(function() {
+                    self.processTimer = null;
+                    self.props.processInput(newValue);
+                }, 250);
             }
         }
     },
@@ -50,10 +63,11 @@ var ValidatedInputField = React.createClass({
         return (
                 <div id={this.props.id} class="validated-input-field">
                     <div class="input-field-container">
-                        <input         type={this.props.type}
+                        <input
+                                type={this.props.type}
                                 placeholder={this.props.placeholder}
-                                      value={this.props.value}
-                                 onfocusout={this.processInput}
+                                value={this.props.value}
+                                onChange={this.processInput}
                         />
                         <div class={validityMarkClasses}></div>
                     </div>
