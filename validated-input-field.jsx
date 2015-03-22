@@ -5,6 +5,7 @@
  * <ValidatedInputField
  *              id={string}
  *              value={string}
+ *              defaultValue={string}
  *              validity={validity object}
  *              processInput={function(newValue)}
  *              type={"email" | "password" | etc...}
@@ -67,6 +68,7 @@ var ValidatedInputField = React.createClass({
                                 type={this.props.type}
                                 placeholder={this.props.placeholder}
                                 value={this.props.value}
+                                defaultValue={this.props.defaultValue}
                                 onChange={this.processInput}
                         />
                         <div class={validityMarkClasses}></div>
