@@ -63,7 +63,7 @@ var ValidatedInputField = React.createClass({
 
         return (
                 <div id={this.props.id} class="validated-input-field">
-                    <div class="input-field-container">
+                    <div className="input-field-container">
                         <input
                                 type={this.props.type}
                                 placeholder={this.props.placeholder}
@@ -71,9 +71,9 @@ var ValidatedInputField = React.createClass({
                                 defaultValue={this.props.defaultValue}
                                 onChange={this.processInput}
                         />
-                        <div class={validityMarkClasses}></div>
+                        <div className={validityMarkClasses}></div>
                     </div>
-                    <div class={validityMessageClasses}>
+                    <div className={validityMessageClasses}>
                         <p>{message}</p>
                         <p>{requirements}</p>
                     </div>
