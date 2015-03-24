@@ -1,5 +1,3 @@
-// tutorial10.js
-
 /**
  *
  * <ValidatedInputField
@@ -51,15 +49,15 @@ var ValidatedInputField = React.createClass({
 
         var valObj          = (this.props.validity || {});
 
-        var valid           = valObj.valid;
+        var valid           = (!_.bool(valObj.valid)) || (valObj.valid===true);
         var message         = valObj.message;
         var requirements    = valObj.requirements;
 
         var validityMarkClasses      = "validity-mark";
-        validityMarkClasses         += " " + ((valid===true) ? "valid" : "invalid");
+        validityMarkClasses         += " " + (valid ? "valid" : "invalid");
 
         var validityMessageClasses   = "validity-message";
-        validityMessageClasses      += " " + ((valid===true) ? "hide" : "");
+        validityMessageClasses      += " " + (valid ? "hide" : "");
 
         return (
                 <div id={this.props.id} class="validated-input-field">
