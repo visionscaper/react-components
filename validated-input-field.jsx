@@ -20,8 +20,8 @@
  */
 var ValidatedInputField = React.createClass({
 
-    processTimer : null,
-
+    processTimer    : null,
+    processedValue  : null,
 
     processInput : function(e) {
         var self = this;
@@ -30,7 +30,7 @@ var ValidatedInputField = React.createClass({
         }
 
         var newValue = (e.target || {}).value;
-        if (newValue !== this.props.value) {
+        if (newValue !== this.processedValue) {
             if (typeof(this.props.processInput) === "function") {
                 if (this.processTimer) {
                     clearTimeout(this.processTimer);
@@ -39,6 +39,7 @@ var ValidatedInputField = React.createClass({
 
                 this.processTimer = setTimeout(function() {
                     self.processTimer = null;
+                    self.processedValue = newValue;
                     self.props.processInput(newValue);
                 }, 250);
             }
@@ -46,6 +47,11 @@ var ValidatedInputField = React.createClass({
     },
 
     render: function() {
+
+        //We want to be able to set the contents of an input field, but at the same time
+        //we don't want to change the content when the user is editing the field.
+        var value           = (this.props.value !== this.processedValue) ? this.props.value : undefined;
+        var defaultValue    = _.def(this.props.value) ? this.props.value : undefined;
 
         var valObj          = (this.props.validity || {});
 
@@ -65,8 +71,8 @@ var ValidatedInputField = React.createClass({
                         <input
                                 type={this.props.type}
                                 placeholder={this.props.placeholder}
-                                value={this.props.value}
-                                defaultValue={this.props.defaultValue}
+                                value={value}
+                                defaultValue={defaultValue}
                                 onChange={this.processInput}
                         />
                         <div className={validityMarkClasses}></div>
