@@ -27,7 +27,7 @@
  */
 var ValidatedInputField = React.createClass({
 
-    lastInternalValue           : null,
+    lastInternalChange          : null,
     lastExternalValue           : null,
     lastValueSentForProcessing  : null,
     lastValueRendered           : null,
@@ -38,7 +38,8 @@ var ValidatedInputField = React.createClass({
 
     getInitialState : function() {
         return {
-            value : null
+            timestamp   : null,
+            value       : null
         };
     },
 
@@ -83,7 +84,10 @@ var ValidatedInputField = React.createClass({
         }
 
         var newValue    = (e.target || {}).value;
-        this.setState({value : newValue});
+        this.setState({
+            timestamp : (new Date()).getTime(),
+            value : newValue
+        });
     },
 
     processInput    : function(newValue, force) {
@@ -179,7 +183,7 @@ var ValidatedInputField = React.createClass({
     render: function() {
         var value = undefined;
 
-        var internalValueChanged = (this.lastInternalValue !== this.state.value);
+        var internalValueChanged = (this.lastInternalChange !== this.state.timestamp);
         var externalValueChanged = (this.lastExternalValue !== this.props.value);
         var externalValueEqualsLastProcessed = (this.lastValueSentForProcessing === this.props.value);
 
@@ -193,7 +197,7 @@ var ValidatedInputField = React.createClass({
             value = this.lastValueRendered;
         }
 
-        this.lastInternalValue      = this.state.value;
+        this.lastInternalChange     = this.state.timestamp;
         this.lastExternalValue      = this.props.value;
         this.lastValueRendered      = value;
 
