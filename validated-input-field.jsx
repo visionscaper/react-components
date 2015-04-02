@@ -1,14 +1,15 @@
 /**
  *
  * <ValidatedInputField
- *              id={string}
- *              value={string}
- *              defaultValue={string}
- *              validity={validity object}
  *              processInput={function(newValue)}
- *              processMode={"onchange" | "onblur"}
- *              throttleDelay={number}
- *              type={"email" | "password" | etc...}
+ *              [id={string}]
+ *              [value={string}}
+ *              [defaultValue={string}]
+ *              [validity={validity object}]
+ *              [onReturnPressed={function()}]
+ *              [processMode={"onchange" | "onblur"}]
+ *              [throttleDelay={number}]
+ *              [type={"email" | "password" | etc...}]
  * />
  *
  * Default for throttleDelay is 0, implying no throttle delay for input processing
@@ -85,11 +86,15 @@ var ValidatedInputField = React.createClass({
         this.setState({value : newValue});
     },
 
-    processInput    : function(newValue) {
+    processInput    : function(newValue, force) {
         var self = this;
 
         if (typeof(this.props.processInput) !== "function") {
             return;
+        }
+
+        if (typeof(force) !== "boolean") {
+            force = false;
         }
 
         var __doProcess = function() {
@@ -104,9 +109,13 @@ var ValidatedInputField = React.createClass({
                 this.processingTimer = null;
             }
 
-            this.processingTimer = setTimeout(function() {
+            if (!force) {
+                this.processingTimer = setTimeout(function() {
+                    __doProcess();
+                }, this.props.throttleDelay);
+            } else {
                 __doProcess();
-            }, this.props.throttleDelay);
+            }
         } else {
             __doProcess();
         }
@@ -130,6 +139,21 @@ var ValidatedInputField = React.createClass({
         this.processInput((e.target || {}).value)
     },
 
+    processKeyPress : function(e) {
+        if (typeof(e)!="object") {
+            return;
+        }
+
+        if (typeof(this.props.onReturnPressed) === "function") {
+            var code = e.keyCode || e.which;
+            if (code === 13) {
+                //Ensure that input in processed before taking action on return
+                this.processInput((e.target || {}).value, true); //force to take action now
+                this.props.onReturnPressed();
+            }
+        }
+    },
+
     getProcessMode : function() {
         var processMode     = typeof(this.props.processMode) === "string" ? this.props.processMode.toLowerCase() : null;
 
@@ -146,6 +170,10 @@ var ValidatedInputField = React.createClass({
         }
 
         return processMode;
+    },
+
+    getInputField : function() {
+        return this.refs.inputField;
     },
 
     render: function() {
@@ -197,6 +225,10 @@ var ValidatedInputField = React.createClass({
             onChangeHandler = this.setValue;
         }
 
+        var onKeyPress = undefined;
+        if (typeof(this.props.onReturnPressed) === "function") {
+            onKeyPress = this.processKeyPress;
+        }
 
         return (
                 <div id={this.props.id} className="validated-input-field">
@@ -208,6 +240,7 @@ var ValidatedInputField = React.createClass({
                                 value={value}
                                 onChange={onChangeHandler}
                                 onBlur={onBlurHandler}
+                                onKeyPress={onKeyPress}
                                 ref="inputField"
                         />
                         <div className={validityMarkClasses}></div>
