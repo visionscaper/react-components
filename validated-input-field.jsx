@@ -33,10 +33,47 @@ var ValidatedInputField = React.createClass({
 
     processingTimer             : null,
 
+    autofillScanner             : null,
+
     getInitialState : function() {
         return {
             value : null
         };
+    },
+
+    componentDidMount : function() {
+        var self = this;
+
+        console.log("component did mount");
+
+        this.autofillScanner = setInterval(function() {
+            var node = React.findDOMNode(self.refs.inputField);
+            if (typeof(node) !== "object") {
+                return;
+            }
+
+            //If it is empty nothing is autofilled
+            if ((typeof(node.value) != "string") || (node.value == "")) {
+                return;
+            }
+
+            if (node.value!==self.lastValueRendered) {
+                console.warn('AUTO FILL DETECTED!');
+
+                var processMode     = self.getProcessMode();
+                var autofillEvent   = {
+                    target : {
+                        value : node.value
+                    }
+                };
+
+                if (processMode == "onblur") {
+                    self.setValue(autofillEvent)
+                } else {
+                    self.processOnChange(autofillEvent);
+                }
+            }
+        }, 350);
     },
 
     setValue       : function(e) {
@@ -93,6 +130,24 @@ var ValidatedInputField = React.createClass({
         this.processInput((e.target || {}).value)
     },
 
+    getProcessMode : function() {
+        var processMode     = typeof(this.props.processMode) === "string" ? this.props.processMode.toLowerCase() : null;
+
+        if ((processMode != "onchange") && (processMode != "onblur")) {
+            //find default processing mode
+            switch (type) {
+                case "email":
+                case "password":
+                    processMode = "onblur";
+                    break;
+                default:
+                    processMode = "onchange";
+            }
+        }
+
+        return processMode;
+    },
+
     render: function() {
         var value = undefined;
 
@@ -130,21 +185,10 @@ var ValidatedInputField = React.createClass({
 
         var type                    = _.def(this.props.type) ? this.props.type : "text";
 
-        var processMode     = typeof(this.props.processMode) === "string" ? this.props.processMode.toLowerCase() : null;
+
+        var processMode     = this.getProcessMode();
         var onChangeHandler = undefined;
         var onBlurHandler   = undefined;
-
-        if ((processMode != "onchange") && (processMode != "onblur")) {
-            //find default processing mode
-            switch (type) {
-                case "email":
-                case "password":
-                    processMode = "onblur";
-                    break;
-                default:
-                    processMode = "onchange";
-            }
-        }
 
         if (processMode == "onchange") {
             onChangeHandler = this.processOnChange;
@@ -153,11 +197,12 @@ var ValidatedInputField = React.createClass({
             onChangeHandler = this.setValue;
         }
 
+
         return (
                 <div id={this.props.id} className="validated-input-field">
                     <div className="input-field-container">
                         <input
-                                type={this.props.type}
+                                type={type}
                                 placeholder={this.props.placeholder}
                                 defaultValue={defaultValue}
                                 value={value}
