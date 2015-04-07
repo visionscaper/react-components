@@ -1,8 +1,10 @@
 /**
  *
  * <ValidatedInputField
+ *              label=[{string}]
  *              processInput={function(newValue)}
  *              [id={string}]
+ *              [className={string}]
  *              [value={string}}
  *              [defaultValue={string}]
  *              [validity={validity object}]
@@ -75,7 +77,7 @@ var ValidatedInputField = React.createClass({
                     self.processOnChange(autofillEvent);
                 }
             }
-        }, 350);
+        }, 500);
     },
 
     setValue       : function(e) {
@@ -217,6 +219,11 @@ var ValidatedInputField = React.createClass({
 
         var type                    = _.def(this.props.type) ? this.props.type : "text";
 
+        var containerClasses        = "validated-input-field " + type;
+        var className               = this.props.className;
+        if ((typeof(className) == "string") && (className.length > 0)) {
+            containerClasses += " " + className;
+        }
 
         var processMode     = this.getProcessMode();
         var onChangeHandler = undefined;
@@ -234,20 +241,27 @@ var ValidatedInputField = React.createClass({
             onKeyPress = this.processKeyPress;
         }
 
+        var label      =  (typeof(this.props.label) == "string") ?
+                <div class="label">{this.props.label}</div> :
+                undefined;
+
         return (
-                <div id={this.props.id} className="validated-input-field">
-                    <div className="input-field-container">
-                        <input
-                                type={type}
-                                placeholder={this.props.placeholder}
-                                defaultValue={defaultValue}
-                                value={value}
-                                onChange={onChangeHandler}
-                                onBlur={onBlurHandler}
-                                onKeyPress={onKeyPress}
-                                ref="inputField"
-                        />
-                        <div className={validityMarkClasses}></div>
+                <div id={this.props.id} className={containerClasses}>
+                    <div className="labelled-input-field-container">
+                        {label}
+                        <div className="input-field-container">
+                            <input
+                                    type={type}
+                                    placeholder={this.props.placeholder}
+                                    defaultValue={defaultValue}
+                                    value={value}
+                                    onChange={onChangeHandler}
+                                    onBlur={onBlurHandler}
+                                    onKeyPress={onKeyPress}
+                                    ref="inputField"
+                            />
+                            <div className={validityMarkClasses}></div>
+                        </div>
                     </div>
                     <div className={validityMessageClasses}>
                         <p>{message}</p>
