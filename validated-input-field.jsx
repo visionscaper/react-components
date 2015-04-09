@@ -248,7 +248,7 @@ var ValidatedInputField = React.createClass({
         return (
                 <div id={this.props.id} className={containerClasses}>
                     <div className="labelled-input-field-container">
-                        {label}
+                        <div className="label">{label}</div>
                         <div className="input-field-container">
                             <input
                                     type={type}
