@@ -217,7 +217,7 @@ var ValidatedInputField = React.createClass({
         var validityMessageClasses  = "validity-message";
         validityMessageClasses     += " " + (valid ? "hide" : "");
 
-        var type                    = _.def(this.props.type) ? this.props.type : "text";
+        var type                    = _.string(this.props.type) ? this.props.type.toLowerCase() : "text";
 
         var containerClasses        = "validated-input-field " + type;
         var className               = this.props.className;
@@ -245,21 +245,33 @@ var ValidatedInputField = React.createClass({
                 <div class="label">{this.props.label}</div> :
                 undefined;
 
+        var inputField = (type != "textarea") ?
+                <input
+                        type={type}
+                        placeholder={this.props.placeholder}
+                        defaultValue={defaultValue}
+                        value={value}
+                        onChange={onChangeHandler}
+                        onBlur={onBlurHandler}
+                        onKeyPress={onKeyPress}
+                        ref="inputField"
+                /> :
+                <textarea
+                        placeholder={this.props.placeholder}
+                        defaultValue={defaultValue}
+                        value={value}
+                        onChange={onChangeHandler}
+                        onBlur={onBlurHandler}
+                        onKeyPress={onKeyPress}
+                        ref="inputField"
+                />;
+
         return (
                 <div id={this.props.id} className={containerClasses}>
                     <div className="labelled-input-field-container">
                         <div className="label">{label}</div>
                         <div className="input-field-container">
-                            <input
-                                    type={type}
-                                    placeholder={this.props.placeholder}
-                                    defaultValue={defaultValue}
-                                    value={value}
-                                    onChange={onChangeHandler}
-                                    onBlur={onBlurHandler}
-                                    onKeyPress={onKeyPress}
-                                    ref="inputField"
-                            />
+                            {inputField}
                             <div className={validityMarkClasses}></div>
                         </div>
                     </div>
