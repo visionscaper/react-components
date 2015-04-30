@@ -214,7 +214,7 @@ var ValidatedInputField = React.createClass({
         var validityMarkClasses     = "validity-mark";
         validityMarkClasses        += " " + (valid ? "valid" : "invalid");
 
-        var validityMessageClasses  = "validity-message";
+        var validityMessageClasses  = "message validity";
         validityMessageClasses     += " " + (valid ? "hide" : "");
 
         var type                    = _.string(this.props.type) ? this.props.type.toLowerCase() : "text";
