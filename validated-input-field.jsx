@@ -242,7 +242,7 @@ var ValidatedInputField = React.createClass({
         }
 
         var label      =  (typeof(this.props.label) == "string") ?
-                <div class="label">{this.props.label}</div> :
+                <div className="label">{this.props.label}</div> :
                 undefined;
 
         var inputField = (type != "textarea") ?
