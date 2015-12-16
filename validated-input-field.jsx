@@ -12,12 +12,15 @@
  *              [processMode={"onchange" | "onblur"}]
  *              [throttleDelay={number}]
  *              [type={"email" | "password" | etc...}]
+ *              [logger={logger instance object}]
  * />
  *
  * Default for throttleDelay is 0, implying no throttle delay for input processing
  *
  * Default for processMode is "onchange" for type not being "email or password".
  * For "email" and "password" onblur is default.
+ *
+ * Default for logger is the console object
  *
  * Validity object:
  * {
@@ -28,6 +31,8 @@
  *
  */
 var ValidatedInputField = React.createClass({
+
+    logger                      : null,
 
     lastInternalChange          : null,
     lastExternalValue           : null,
@@ -46,11 +51,16 @@ var ValidatedInputField = React.createClass({
     },
 
     componentDidMount : function() {
+        var me = "ValidatedInputField::componentDidMount";
         var self = this;
 
-        console.log("component did mount");
+        var _l = this.getLogger();
+
+        _l.debug(me, "component did mount");
 
         this.autofillScanner = setInterval(function() {
+            var me = "ValidatedInputField::autofillScanner";
+
             var node = React.findDOMNode(self.refs.inputField);
             if (typeof(node) !== "object") {
                 return;
@@ -62,7 +72,7 @@ var ValidatedInputField = React.createClass({
             }
 
             if (node.value!==self.lastValueRendered) {
-                console.warn('AUTO FILL DETECTED!');
+                _l.warn(me, 'AUTO FILL DETECTED!');
 
                 var processMode     = self.getProcessMode();
                 var autofillEvent   = {
@@ -281,5 +291,9 @@ var ValidatedInputField = React.createClass({
                     </div>
                 </div>
                );
+    },
+
+    getLogger : function() {
+        return (this.logger = this.logger || this.props.logger || console);
     }
 });
