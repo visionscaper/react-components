@@ -5,6 +5,7 @@
  *              processInput={function(newValue)}
  *              [id={string}]
  *              [className={string}]
+ *              [placeholder={string}]
  *              [value={string}}
  *              [defaultValue={string}]
  *              [validity={validity object}]
