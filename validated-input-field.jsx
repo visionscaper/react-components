@@ -210,6 +210,19 @@ var ValidatedInputField = React.createClass({
             value = this.lastValueRendered;
         }
 
+        //lastValueSentForProcessing is used to capture the situation where a value sent for processing is
+        // given back after processing. In that situation no external value update is required.
+        // However, it can occur that the internal value is updated and sent for processing, after that the value is
+        // changed externally, and then after that the value is changed externally back to the original value that was
+        // set internally.
+        //
+        //If we don't reset the lastValueSentForProcessing when the externalValueChanged has changed, above special
+        // case can occur. 'lastValueSentForProcessing' only needs to be used once to capture the internally changed value
+        // that is given back after processing by a controller. After that it needs to be reset.
+        if (externalValueChanged) {
+            this.lastValueSentForProcessing = undefined;
+        }
+
         this.lastInternalChange     = this.state.timestamp;
         this.lastExternalValue      = this.props.value;
         this.lastValueRendered      = value;
