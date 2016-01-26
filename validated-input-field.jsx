@@ -59,6 +59,12 @@ var ValidatedInputField = React.createClass({
 
         _l.debug(me, "component did mount");
 
+        //Autofill scanning doesn't work for textarea as it seems
+        // But the good thing is that it is not really needed for text areas.
+        if (this.getFieldType(this.props.type) == "textarea") {
+            return;
+        }
+
         this.autofillScanner = setInterval(function() {
             var me = "ValidatedInputField::autofillScanner";
 
@@ -193,6 +199,10 @@ var ValidatedInputField = React.createClass({
         return this.refs.inputField;
     },
 
+    getFieldType : function() {
+        return (typeof(this.props.type) == "string") ? this.props.type.toLowerCase() : "text";
+    },
+
     render: function() {
         var value = undefined;
 
@@ -241,7 +251,7 @@ var ValidatedInputField = React.createClass({
         var validityMessageClasses  = "message validity";
         validityMessageClasses     += " " + (valid ? "hide" : "");
 
-        var type                    = _.string(this.props.type) ? this.props.type.toLowerCase() : "text";
+        var type                    = this.getFieldType(this.props.type);
 
         var containerClasses        = "validated-input-field " + type;
         var className               = this.props.className;
