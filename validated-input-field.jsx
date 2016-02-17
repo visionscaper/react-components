@@ -63,7 +63,7 @@ var ValidatedInputField = React.createClass({
             var me = "ValidatedInputField::autofillScanner";
 
             var node = React.findDOMNode(self.refs.inputField);
-            if (typeof(node) !== "object") {
+            if (node !== Object(node)) {
                 return;
             }
 
@@ -92,7 +92,7 @@ var ValidatedInputField = React.createClass({
     },
 
     setValue       : function(e) {
-        if (typeof(e)!="object") {
+        if (e !== Object(e)) {
             return;
         }
 
@@ -141,7 +141,7 @@ var ValidatedInputField = React.createClass({
     processOnChange : function(e) {
         this.setValue(e);
 
-        if (typeof(e)!="object") {
+        if (e !== Object(e)) {
             return;
         }
 
@@ -149,7 +149,7 @@ var ValidatedInputField = React.createClass({
     },
 
     processOnBlur : function(e) {
-        if (typeof(e)!="object") {
+        if (e !== Object(e)) {
             return;
         }
 
@@ -157,7 +157,7 @@ var ValidatedInputField = React.createClass({
     },
 
     processKeyPress : function(e) {
-        if (typeof(e)!="object") {
+        if (e !== Object(e)) {
             return;
         }
 
