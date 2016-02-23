@@ -145,7 +145,7 @@ var ValidatedInputField = React.createClass({
             return;
         }
 
-        this.processInput((e.target || {}).value)
+        this.processInput(this._getValueFromEvent(e));
     },
 
     processOnBlur : function(e) {
@@ -153,7 +153,7 @@ var ValidatedInputField = React.createClass({
             return;
         }
 
-        this.processInput((e.target || {}).value)
+        this.processInput(this._getValueFromEvent(e))
     },
 
     processKeyPress : function(e) {
@@ -165,7 +165,7 @@ var ValidatedInputField = React.createClass({
             var code = e.keyCode || e.which;
             if (code === 13) {
                 //Ensure that input in processed before taking action on return
-                this.processInput((e.target || {}).value, true); //force to take action now
+                this.processInput(this._getValueFromEvent(e)); //force to take action now
                 this.props.onReturnPressed();
             }
         }
@@ -176,7 +176,7 @@ var ValidatedInputField = React.createClass({
 
         if ((processMode != "onchange") && (processMode != "onblur")) {
             //find default processing mode
-            switch (type) {
+            switch (type) { // TODO: type undefined
                 case "email":
                 case "password":
                     processMode = "onblur";
@@ -279,9 +279,21 @@ var ValidatedInputField = React.createClass({
             onKeyPress = this.processKeyPress;
         }
 
-        var label      =  (typeof(this.props.label) == "string") ?
+        var label;
+        if(_.func(this.props.label)) {
+            label = this.props.label();
+        } else {
+            label      =  (typeof(this.props.label) == "string") ?
                 <div className="label">{this.props.label}</div> :
                 undefined;
+        }
+
+        var inlineLabel = '', fullLineLabel = '';
+        if(type === 'checkbox') {
+            inlineLabel = <div className="label inline">{label}</div>;
+        } else {
+            fullLineLabel = <div className="label">{label}</div>;
+        }
 
         var inputField = (type != "textarea") ?
                 <input
@@ -307,9 +319,10 @@ var ValidatedInputField = React.createClass({
         return (
                 <div id={this.props.id} className={containerClasses}>
                     <div className="labelled-input-field-container">
-                        <div className="label">{label}</div>
+                        {fullLineLabel}
                         <div className="input-field-container">
                             {inputField}
+                            {inlineLabel}
                             <div className={validityMarkClasses}></div>
                         </div>
                     </div>
@@ -323,5 +336,15 @@ var ValidatedInputField = React.createClass({
 
     getLogger : function() {
         return (this.logger = this.logger || this.props.logger || console);
+    },
+
+    _getValueFromEvent : function(e) {
+        var value;
+        if(this.props.type === 'checkbox') {
+            value = _.get(e, 'target.checked');
+        } else {
+            value = (e.target || {}).value;
+        }
+        return value;
     }
 });
