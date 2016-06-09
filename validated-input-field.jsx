@@ -295,6 +295,8 @@ var ValidatedInputField = React.createClass({
             fullLineLabel = <div className="label">{label}</div>;
         }
 
+        var instructions = _.string(this.props.instructions) ? <div className="field-instructions">{this.props.instructions}</div> : '';
+
         var inputField = (type != "textarea") ?
                 <input
                         type={type}
@@ -325,6 +327,7 @@ var ValidatedInputField = React.createClass({
                             {inlineLabel}
                             <div className={validityMarkClasses}></div>
                         </div>
+                        {instructions}
                     </div>
                     <div className={validityMessageClasses}>
                         <p>{message}</p>
