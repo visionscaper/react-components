@@ -59,36 +59,38 @@ var ValidatedInputField = React.createClass({
 
         _l.debug(me, "component did mount");
 
-        this.autofillScanner = setInterval(function() {
-            var me = "ValidatedInputField::autofillScanner";
+        if(this.props.noAutoFill === true) {
+            this.autofillScanner = setInterval(function() {
+                var me = "ValidatedInputField::autofillScanner";
 
-            var node = React.findDOMNode(self.refs.inputField);
-            if (node !== Object(node)) {
-                return;
-            }
-
-            //If it is empty nothing is autofilled
-            if ((typeof(node.value) != "string") || (node.value == "")) {
-                return;
-            }
-
-            if (node.value!==self.lastValueRendered) {
-                _l.warn(me, 'AUTO FILL DETECTED!');
-
-                var processMode     = self.getProcessMode();
-                var autofillEvent   = {
-                    target : {
-                        value : node.value
-                    }
-                };
-
-                if (processMode == "onblur") {
-                    self.setValue(autofillEvent)
-                } else {
-                    self.processOnChange(autofillEvent);
+                var node = React.findDOMNode(self.refs.inputField);
+                if (node !== Object(node)) {
+                    return;
                 }
-            }
-        }, 500);
+
+                //If it is empty nothing is autofilled
+                if ((typeof(node.value) != "string") || (node.value == "")) {
+                    return;
+                }
+
+                if (node.value!==self.lastValueRendered) {
+                    _l.warn(me, 'AUTO FILL DETECTED!');
+
+                    var processMode     = self.getProcessMode();
+                    var autofillEvent   = {
+                        target : {
+                            value : node.value
+                        }
+                    };
+
+                    if (processMode == "onblur") {
+                        self.setValue(autofillEvent)
+                    } else {
+                        self.processOnChange(autofillEvent);
+                    }
+                }
+            }, 500);
+        }
     },
 
     setValue       : function(e) {
